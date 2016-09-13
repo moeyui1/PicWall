@@ -2,35 +2,11 @@
  * Created by moeyui on 2016/9/13 0013.
  */
 
-
+import Imgitem from 'Imgitem'
 var jsondata = []   //原始榜单json数据
 var counter = 0
 var current_datalist = []
-class ImgItem extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
-    render() {
-        var illust = this.props.data;
-        const link = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + illust.illust_id
-        const user_link = "http://www.pixiv.net/member.php?id=" + illust.user_id
-        return
-            <div className="grid-item" key={illust.illust_id}>
-                <a href={link}>
-                    <div className="content">
-                        <img src={illust.url} className="natural pic "/>
-                        <p className="text-center">{illust.title}</p>
-                        <a href={user_link}>
-                            <img className="icon" src={illust.profile_img}/>
-                            <span className="icon-text">{illust.user_name}</span>
-                        </a>
-                    </div>
-                </a>
-            </div>
-        ;
-    }
-}
 class Imgbox extends React.Component {
     constructor(props) {
         super(props);
@@ -96,12 +72,9 @@ class Imgbox extends React.Component {
             var imgJSON = this.state.data
             imglist = imgJSON.map(this.constructPicHtml);
         }
-        return
-            //这里一定要用一个标签surrond变量，否则会报错
-            <div onWheel={this.handleOnWheel.bind(this)}>
-                {imglist}
-            </div>
-        ;
+        return <div onWheel={this.handleOnWheel.bind(this)}>
+            {imglist}
+        </div>;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -118,11 +91,9 @@ class Imgbox extends React.Component {
             percentPosition: true
             // fitWidth: true
         });
-
         $grid.masonry(
             'appended', elements
         );
-
         $grid.imagesLoaded().progress(
             function () {
                 $grid.masonry('layout');
