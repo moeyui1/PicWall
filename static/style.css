@@ -16,7 +16,7 @@ body {
 /*}*/
 
 .pic {
-    width: 240px;
+    width: 100%;
     height: auto;
 }
 
@@ -28,12 +28,10 @@ body {
 }
 
 .grid-item {
-    width: 250px;
+    width: 20%;
 }
 
-.grid-item-width2 {
-    width: 300px;
-}
+
 
 .icon {
     border-radius: 3px;
