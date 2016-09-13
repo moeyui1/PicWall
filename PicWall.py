@@ -25,4 +25,4 @@ def getPixivJson():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False,port=9998,host='0.0.0.0')
