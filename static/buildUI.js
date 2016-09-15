@@ -1,18 +1,6 @@
 var jsondata = []   //原始榜单json数据
 var counter = 0
-var current_datalist = []
-// function addData() {
-//     var result
-//     if (counter + 17 <= jsondata.length - 1) {
-//         result = jsondata.slice(counter, counter + 17)
-//         counter += 18
-//
-//     } else {
-//         result = jsondata.slice(counter)
-//         counter = -1
-//     }
-//     // Imgbox.setState({data: current_datalist.concat(result)})
-// }
+
 
 var ImgItem = React.createClass({
     render: function () {
@@ -21,7 +9,7 @@ var ImgItem = React.createClass({
         var user_link = "http://www.pixiv.net/member.php?id=" + illust.user_id
         // console.log(link)
         return (
-            <div className="grid-item" key={illust.illust_id}>
+            <div className="grid-item col-xs-6 col-sm-3 col-md-2" key={illust.illust_id}>
                 <a href={link}>
                     <div className="content">
                         <img src={illust.url} className="natural pic "/>
