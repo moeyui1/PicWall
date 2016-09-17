@@ -5,8 +5,8 @@ const instance = Layzr();
 var ImgItem = React.createClass({
     render: function () {
         var illust = this.props.data;
-        var link = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + illust.illust_id
-        var user_link = "http://www.pixiv.net/member.php?id=" + illust.user_id
+        var link = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + illust.illust_id;
+        var user_link = "http://www.pixiv.net/member.php?id=" + illust.user_id;
         // console.log(link)
         return (
             <div className="grid-item col-xs-6 col-sm-3 col-md-2" key={illust.illust_id}>
@@ -16,7 +16,8 @@ var ImgItem = React.createClass({
                     </a>
                     <p className="text-center">{illust.title}</p>
                     <a href={user_link}>
-                        <img className="icon" src={illust.profile_img}/>
+                        <img className="icon"
+                             src={'/pixiv/user_avatar?url=' + illust.profile_img.replace(/\//g, "%2F").replace(/:/g, "%3A").replace(/-/g,"%2d").replace(/_/g,"%5F") + '&id=' + illust.illust_id}/>
                         <span className="icon-text">{illust.user_name}</span>
                     </a>
                 </div>

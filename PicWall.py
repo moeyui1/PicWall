@@ -1,6 +1,6 @@
 # coding: utf-8
 import requests
-from flask import Flask, Response
+from flask import Flask, Response,request
 from flask import render_template
 
 app = Flask(__name__)
@@ -31,7 +31,21 @@ def downloadPic(id, url):
         return "请选择一张需要下载的图片"
     r = requests.get(url, headers={
         'Referer': 'http://www.pixiv.net/member_illust.php?mode=medium&illust_id={0}'.format(id),
-    # 添加Referer，否则会返回403错误
+        # 添加Referer，否则会返回403错误
+        'User-Agent': 'Mozilla/5.0 (Macintosh; '
+                      'Intel Mac OS X 10_10_5) '
+                      'AppleWebKit/537.36 (KHTML, like Gecko) '
+                      'Chrome/45.0.2454.101 Safari/537.36'
+    })
+    return r.content
+
+
+@app.route('/pixiv/user_avatar')
+def getAvatar():
+    url=request.args.get('url')
+    id=request.args.get('id')
+    r = requests.get(url, headers={
+        "Referer": 'http://www.pixiv.net/member_illust.php?mode=medium&illust_id={0}'.format(id),
         'User-Agent': 'Mozilla/5.0 (Macintosh; '
                       'Intel Mac OS X 10_10_5) '
                       'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -46,4 +60,4 @@ def getYandereJson():
 
 
 if __name__ == '__main__':
-    app.run(debug=False,port=9998)
+    app.run(debug=False, port=9998)
