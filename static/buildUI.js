@@ -2,12 +2,14 @@ var jsondata = [];   //原始榜单json数据
 const instance = Layzr();
 
 
-var ImgItem = React.createClass({
+var PixivItem = React.createClass({
+    componentDidMount: function (prevProps, prevState) {
+        NProgress.inc();
+    },
     render: function () {
         var illust = this.props.data;
         var link = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + illust.illust_id;
         var user_link = "http://www.pixiv.net/member.php?id=" + illust.user_id;
-        // console.log(link)
         return (
             <div className="grid-item col-xs-6 col-sm-3 col-md-2" key={illust.illust_id}>
                 <div className="content">
@@ -16,8 +18,8 @@ var ImgItem = React.createClass({
                     </a>
                     <p className="text-center">{illust.title}</p>
                     <a href={user_link}>
-                        <img className="icon"
-                             src={'/pixiv/user_avatar?url=' + illust.profile_img.replace(/\//g, "%2F").replace(/:/g, "%3A").replace(/-/g,"%2d").replace(/_/g,"%5F") + '&id=' + illust.illust_id}/>
+                        <img className="icon" src="/static/loading.gif"
+                             data-normal={'/pixiv/user_avatar?url=' + illust.profile_img.replace(/\//g, "%2F").replace(/:/g, "%3A").replace(/-/g, "%2d").replace(/_/g, "%5F") + '&id=' + illust.illust_id}/>
                         <span className="icon-text">{illust.user_name}</span>
                     </a>
                 </div>
@@ -34,7 +36,7 @@ var Imgbox = React.createClass({
             success: function (data) {
                 // console.log(data)
                 jsondata = data.contents;
-                this.setState({data: jsondata, width: "90"});
+                this.setState({data: jsondata});
             }.bind(this),
             error: function (xhr, status, err) {
                 console.error(this.props.url, status, err.toString());
@@ -46,16 +48,17 @@ var Imgbox = React.createClass({
         return {data: undefined, width: 20, grid: $('.grid')};
     },
     componentDidMount: function () {
+        NProgress.start();
         this.loadCommentsFromServer();
     },
 
     constructPicHtml: function (illust) {
         return (
-            <ImgItem data={illust} key={illust.illust_id}/>
+            <PixivItem data={illust} key={illust.illust_id}/>
         );
     },
     componentDidUpdate: function (prevProps, prevState) {
-        console.log("from imgbox");
+        // console.log("from imgbox");
         instance.update().check().handlers(true);
 
         //将图片排序
@@ -77,6 +80,7 @@ var Imgbox = React.createClass({
                     );
                 })
             });
+        NProgress.done()
     },
     render: function () {
         var imglist = <p className="text-center">图片加载中</p>
@@ -87,7 +91,7 @@ var Imgbox = React.createClass({
         return (
             //这里一定要用一个标签surrond变量，否则会报错
             <div>
-                <ProcessBar width={this.state.width}/>
+                {/*<ProcessBar width={this.state.width}/>*/}
                 <div className="grid">
                     {imglist}
                 </div>
@@ -135,7 +139,7 @@ var Root = React.createClass(
                     <Imgbox url={this.props.url}/>
                 </div>
             );
-        }
+        },
 
     }
 );
@@ -154,4 +158,5 @@ document.addEventListener('DOMContentLoaded', event => {
         .update()           // track initial elements
         .check()            // check initial elements
         .handlers(true);     // bind scroll and resize handlers
+    console.log('finish')
 });

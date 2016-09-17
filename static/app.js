@@ -62,7 +62,7 @@ class Imgbox extends React.Component {
 
     constructPicHtml(illust) {
         return
-            <ImgItem data={illust}/>
+            <PixivItem data={illust}/>
         ;
     }
 

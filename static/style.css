@@ -6,16 +6,19 @@
 body {
     background-color: #eeeeee;
 }
-#headerbar{
+
+#headerbar {
     margin: 8px 0px 8px 0px;
 }
+
 .pic {
     width: 100%;
     height: auto;
 }
-.pic:hover{
-    border:solid;
-    border-width:1px;
+
+.pic:hover {
+    border: solid;
+    border-width: 1px;
 }
 
 .content {
@@ -23,8 +26,11 @@ body {
     background: white;
     border: 1px solid #ddd;
     box-shadow: 2px 2px 3px rgba(50, 50, 50, 0.4);
+    border-radius: 10px;
+
 }
-.content:hover{
+
+.content:hover {
     border-style: groove;
 }
 
