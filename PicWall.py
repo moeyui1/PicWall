@@ -40,7 +40,7 @@ def downloadPic(id, url):
     return r.content
 
 
-@app.route('/pixiv/user_avatar')
+@app.route('/pixiv/user_avatar_ban')
 def getAvatar():
     url=request.args.get('url')
     id=request.args.get('id')
@@ -56,7 +56,16 @@ def getAvatar():
 
 @app.route('/yandere')
 def getYandereJson():
-    pass
+    YANDERE_URL="https://yande.re/post/popular_recent.json"
+    r = requests.get(YANDERE_URL)
+    return Response(
+        r.text,
+        mimetype='application/json',
+        headers={
+            'Cache-Control': 'no-cache',
+            'Access-Control-Allow-Origin': '*'
+        }
+    )
 
 
 if __name__ == '__main__':

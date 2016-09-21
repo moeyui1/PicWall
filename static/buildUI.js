@@ -1,162 +1,225 @@
-var jsondata = [];   //原始榜单json数据
 const instance = Layzr();
-
-
-var PixivItem = React.createClass({
-    componentDidMount: function (prevProps, prevState) {
+const PIXIV_URL = '/pixiv';
+const YANDERE_URL = "/yandere"
+class PixivItem extends React.Component {
+    componentDidMount(prevProps, prevState) {
         NProgress.inc();
-    },
-    render: function () {
+    }
+
+    render() {
         var illust = this.props.data;
         var link = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + illust.illust_id;
         var user_link = "http://www.pixiv.net/member.php?id=" + illust.user_id;
         return (
-            <div className="grid-item col-xs-6 col-sm-3 col-md-2" key={illust.illust_id}>
-                <div className="content">
+            <div className="grid-item hvr-radial-out col-xs-6 col-sm-3 col-md-2" key={illust.illust_id}>
+                <div className="hvr-buzz content ">
                     <a href={link}>
-                        <img data-normal={illust.url} className="natural pic "/>
+                        <img src="/static/placeholder.png" data-normal={illust.url} className="natural pic "/>
                     </a>
                     <p className="text-center">{illust.title}</p>
                     <a href={user_link}>
                         <img className="icon" src="/static/loading.gif"
-                             data-normal={'/pixiv/user_avatar?url=' + illust.profile_img.replace(/\//g, "%2F").replace(/:/g, "%3A").replace(/-/g, "%2d").replace(/_/g, "%5F") + '&id=' + illust.illust_id}/>
+                             idata-normal={'/pixiv/user_avatar?url=' + illust.profile_img.replace(/\//g, "%2F").replace(/:/g, "%3A").replace(/-/g, "%2d").replace(/_/g, "%5F") + '&id=' + illust.illust_id}/>
                         <span className="icon-text">{illust.user_name}</span>
                     </a>
                 </div>
             </div>
         );
     }
-});
-var Imgbox = React.createClass({
+}
+class YandereItem extends React.Component {
+    componentDidMount(prevProps, prevState) {
+        NProgress.inc();
+    }
 
-    loadCommentsFromServer: function () {
-        $.ajax({
-            url: this.props.url,
-            cache: false,
-            success: function (data) {
-                // console.log(data)
-                jsondata = data.contents;
-                this.setState({data: jsondata});
-            }.bind(this),
-            error: function (xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-
-    },
-    getInitialState: function () {
-        return {data: undefined, width: 20, grid: $('.grid')};
-    },
-    componentDidMount: function () {
-        NProgress.start();
-        this.loadCommentsFromServer();
-    },
-
-    constructPicHtml: function (illust) {
+    render() {
+        var illust = this.props.data;
+        var link = "#";
+        var user_link = "#";
         return (
-            <PixivItem data={illust} key={illust.illust_id}/>
+            <div className="grid-item hvr-radial-out col-xs-6 col-sm-3 col-md-2" key={illust.illust_id}>
+                <div className="hvr-buzz content ">
+                    <a href={link}>
+                        <img data-normal={illust.preview_url} className="natural pic "/>
+                    </a>
+                    <p className="text-center">{illust.tags}</p>
+                    <a href={user_link}>
+                        <img className="icon" data-normal="/static/loading.gif"/>
+                        <span className="icon-text">{illust.author}</span>
+                    </a>
+                </div>
+            </div>
         );
-    },
-    componentDidUpdate: function (prevProps, prevState) {
-        // console.log("from imgbox");
-        instance.update().check().handlers(true);
+    }
+}
 
-        //将图片排序
-        var $grid = $('.grid').masonry({
-            // options
-            itemSelector: '.grid-item',
-            columnWidth: '.grid-item',
-            percentPosition: true
-        });
+
+class Imgbox extends React.Component {
+    constructor() {
+        super();
+    }
+
+    componentDidMount() {
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        instance.update().check().handlers(true);
+        if (window.$grid != undefined) {
+            window.$grid.masonry('reloadItems');
+        }
+        // 将图片排序
+        else {
+            window.$grid = $(this.refs.grid).masonry({
+                // options
+                itemSelector: '.grid-item',
+                columnWidth: '.grid-item',
+                percentPosition: true
+            });
+        }
         instance
             .on('src:after', image => {
                 // add a load event listener
                 image.addEventListener('load', event => {
-                    // ...
-                    $grid.imagesLoaded().progress(
+                    window.$grid.imagesLoaded().progress(
                         function () {
-                            $grid.masonry('layout');
+                            window.$grid.masonry('layout');
                         }
                     );
-                })
+                });
+
             });
+
+        window.$grid.imagesLoaded().progress(
+            function () {
+                window.$grid.masonry('layout');
+            }
+        );
+        window.$grid.masonry('layout');
+
         NProgress.done()
-    },
-    render: function () {
+    }
+
+    render() {
         var imglist = <p className="text-center">图片加载中</p>
-        if (this.state.data) {
-            var imgJSON = this.state.data;
-            imglist = imgJSON.map(this.constructPicHtml);
+        if (this.props.data) {
+            var imgJSON = this.props.data;
+            if (this.props.url == PIXIV_URL)
+                imglist = imgJSON.contents.map(function (illust) {
+                    return (<PixivItem data={illust} key={illust.illust_id}/>);
+                });
+            else if (this.props.url == YANDERE_URL) {
+                imglist = imgJSON.map(function (illust) {
+                    return (<YandereItem data={illust} key={illust.id}/>);
+                });
+            }
         }
+
         return (
             //这里一定要用一个标签surrond变量，否则会报错
             <div>
-                {/*<ProcessBar width={this.state.width}/>*/}
-                <div className="grid">
+                <div className="grid bricklayer" ref="grid">
                     {imglist}
                 </div>
             </div>
         );
-    },
+    }
+}
 
+class Header extends React.Component {
 
-});
-class ProcessBar extends React.Component {
+    toPixiv() {
+        console.log(this.props.parent)
+        $(this.refs.yandere).toggleClass("active");
+        $(this.refs.pixiv).toggleClass("active");
+        this.props.loader('/pixiv');
+    }
+
+    toYandere() {
+        console.log(this.props.parent)
+        $(this.refs.pixiv).toggleClass("active");
+        $(this.refs.yandere).toggleClass("active");
+        this.props.loader('/yandere');
+    }
+
     render() {
-        if (this.props.width == '90')
-            return null;
         return (
-            <div className="progress" height={'100%'}>
-                <div className="progress-bar progress-bar-striped active" role="progressbar"
-                     aria-valuenow={this.props.width}
-                     aria-valuemin="0" aria-valuemax="100" style={{width: this.props.width + '%'}}>
-                    <span className="sr-only">{this.props.width} Complete</span>
+            <nav className="navbar navbar-default" role="navigation">
+                <div className="container-fluid">
+                    {/*<!-- Brand and toggle get grouped for better mobile display -->*/}
+                    <div className="navbar-header">
+                        <button type="button" className="navbar-toggle collapsed" data-toggle="collapse"
+                                data-target="#bs-example-navbar-collapse-1">
+                            <span className="sr-only">Toggle navigation</span>
+                            <span className="icon-bar"></span>
+                            <span className="icon-bar"></span>
+                            <span className="icon-bar"></span>
+                        </button>
+                        <a className="navbar-brand" href="">Ranking</a>
+                    </div>
+                    {/*<!-- Collect the nav links, forms, and other content for toggling -->*/}
+                    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul className="nav navbar-nav">
+                            <li className="active" ref="pixiv"><a href="javascript:void(0)"
+                                                                  onClick={()=>this.toPixiv()}>Pixiv</a>
+                            </li>
+                            <li ref="yandere"><a href="javascript:void(0)"
+                                                 onClick={()=>this.toYandere()}>Yandere</a>
+                            </li>
+                        </ul>
+                        {/*<form className="navbar-form navbar-left" role="search">*/}
+                        {/*<div className="form-group">*/}
+                        {/*<input type="text" className="form-control" placeholder="Search"/>*/}
+                        {/*</div>*/}
+                        {/*<button type="submit" className="btn btn-default">Submit</button>*/}
+                        {/*</form>*/}
+                        <ul className="nav navbar-nav navbar-right">
+                            <li><a href="javascript:void(0)">Link</a></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
+            </nav>
+
         );
     }
 }
-class Header extends React.Component {
+class Root extends React.Component {
+    constructor() {
+        super();
+        this.state = {url: PIXIV_URL, data: null};
+        this.loadJsonFromServer(this.state.url)
+    }
+
+    loadJsonFromServer(url) {
+        NProgress.start();
+        console.log(this)
+        $.ajax({
+            url: url,
+            cache: false,
+            success: (data) => {console.log(this);this.setState({data: data, url: url})},
+            error: (xhr, status, err) =>
+                console.error(url, status, err.toString())
+
+        });
+
+    }
+
     render() {
         return (
             <div>
-                <h3>图站日榜</h3>
-                <ul className="nav nav-pills " role="tablist" id="headerbar">
-                    <li role="presentation" className="active"><a href="#">Home</a></li>
-                    <li role="presentation"><a href="#">Pixiv</a></li>
-                    <li role="presentation"><a href="#">yande.re</a></li>
-                </ul>
+                <Header loader={(url)=>this.loadJsonFromServer(url)} parent={this}/>
+                <div className="container-fluid">
+                    <Imgbox data={this.state.data} url={this.state.url}/>
+                </div>
             </div>
         );
     }
-}
-var Root = React.createClass(
-    {
-        render: function () {
-            return (
-                <div className="container-fluid">
-                    <Header/>
-                    <Imgbox url={this.props.url}/>
-                </div>
-            );
-        },
 
-    }
-);
+
+}
 
 
 ReactDOM.render(
-    <Root url="/pixiv"/>, document.getElementById('test')
+    <Root />, document.getElementById('test')
 );
 
 
-// console.log($grid.masonry('getItemElements'),$('.grid'));
-
-
-document.addEventListener('DOMContentLoaded', event => {
-    instance
-        .update()           // track initial elements
-        .check()            // check initial elements
-        .handlers(true);     // bind scroll and resize handlers
-    console.log('finish')
-});
