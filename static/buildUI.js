@@ -12,7 +12,7 @@ class PixivItem extends React.Component {
         var user_link = "http://www.pixiv.net/member.php?id=" + illust.user_id;
         return (
             <div className="grid-item hvr-radial-out col-xs-6 col-sm-3 col-md-2" key={illust.illust_id}>
-                <div className="hvr-buzz content ">
+                <div className=" content ">
                     <a href={link}>
                         <img src="/static/placeholder.png" data-normal={illust.url} className="natural pic "/>
                     </a>
@@ -38,7 +38,7 @@ class YandereItem extends React.Component {
         var user_link = "#";
         return (
             <div className="grid-item hvr-radial-out col-xs-6 col-sm-3 col-md-2" key={illust.illust_id}>
-                <div className="hvr-buzz content ">
+                <div className=" content ">
                     <a href={link}>
                         <img data-normal={illust.preview_url} className="natural pic "/>
                     </a>
@@ -171,7 +171,7 @@ class Header extends React.Component {
                         {/*<button type="submit" className="btn btn-default">Submit</button>*/}
                         {/*</form>*/}
                         <ul className="nav navbar-nav navbar-right">
-                            <li><a href="javascript:void(0)">Link</a></li>
+                            <li><a href="https://github.com/moeyui1/PicWall">Star on GitHub</a></li>
                         </ul>
                     </div>
                 </div>
