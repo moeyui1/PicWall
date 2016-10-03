@@ -18,8 +18,8 @@ class PixivItem extends React.Component {
                     </a>
                     <p className="text-center">{illust.title}</p>
                     <a href={user_link}>
-                        <img className="icon" src="/static/loading.gif"
-                             idata-normal={'/pixiv/user_avatar?url=' + illust.profile_img.replace(/\//g, "%2F").replace(/:/g, "%3A").replace(/-/g, "%2d").replace(/_/g, "%5F") + '&id=' + illust.illust_id}/>
+                        {/*<img className="icon" src="/static/loading.gif"*/}
+                             {/*idata-normal={'/pixiv/user_avatar?url=' + illust.profile_img.replace(/\//g, "%2F").replace(/:/g, "%3A").replace(/-/g, "%2d").replace(/_/g, "%5F") + '&id=' + illust.illust_id}/>*/}
                         <span className="icon-text">{illust.user_name}</span>
                     </a>
                 </div>
@@ -44,7 +44,7 @@ class YandereItem extends React.Component {
                     </a>
                     <p className="text-center">{illust.tags}</p>
                     <a href={user_link}>
-                        <img className="icon" data-normal="/static/loading.gif"/>
+                        {/*<img className="icon" data-normal="/static/loading.gif"/>*/}
                         <span className="icon-text">{illust.author}</span>
                     </a>
                 </div>
@@ -128,14 +128,12 @@ class Imgbox extends React.Component {
 class Header extends React.Component {
 
     toPixiv() {
-        console.log(this.props.parent)
         $(this.refs.yandere).toggleClass("active");
         $(this.refs.pixiv).toggleClass("active");
         this.props.loader('/pixiv');
     }
 
     toYandere() {
-        console.log(this.props.parent)
         $(this.refs.pixiv).toggleClass("active");
         $(this.refs.yandere).toggleClass("active");
         this.props.loader('/yandere');
@@ -191,11 +189,10 @@ class Root extends React.Component {
 
     loadJsonFromServer(url) {
         NProgress.start();
-        console.log(this)
         $.ajax({
             url: url,
             cache: false,
-            success: (data) => {console.log(this);this.setState({data: data, url: url})},
+            success: (data) => {this.setState({data: data, url: url})},
             error: (xhr, status, err) =>
                 console.error(url, status, err.toString())
 
